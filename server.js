@@ -141,7 +141,7 @@ function uniqueSlug(name, excludeId) {
   return slug;
 }
 
-for (const e of db.prepare('SELECT id, name FROM events WHERE slug IS NULL OR slug=""').all()) {
+for (const e of db.prepare("SELECT id, name FROM events WHERE slug IS NULL OR slug=''").all()) {
   db.prepare('UPDATE events SET slug=? WHERE id=?').run(uniqueSlug(e.name, e.id), e.id);
 }
 
@@ -823,7 +823,7 @@ app.post('/api/events/:eventId/scan', auth, eventAccess, (req, res) => {
   const run = db.transaction(() => {
     const current = db.prepare('SELECT status FROM guests WHERE id=?').get(g.id);
     if (current.status === 'Admitted') {
-      const first = db.prepare('SELECT scanned_at, usher FROM scans WHERE guest_id=? AND result="admitted" ORDER BY scanned_at LIMIT 1').get(g.id);
+      const first = db.prepare("SELECT scanned_at, usher FROM scans WHERE guest_id=? AND result='admitted' ORDER BY scanned_at LIMIT 1").get(g.id);
       db.prepare('INSERT INTO scans(request_id, guest_id, result, scanned_at, usher) VALUES(?,?,?,?,?)')
         .run(request_id, g.id, 'duplicate', now(), req.user.username);
       return { result: 'duplicate', ...(first || {}) };
@@ -847,8 +847,8 @@ app.get('/api/usher-events', auth, (req, res) => {
 app.get('/api/events/:eventId/stats', auth, eventAccess, (req, res) => {
   const summary = db.prepare(`SELECT count(*) total, sum(status='Admitted') admitted, sum(status='Waiting') waiting FROM guests WHERE event_id=?`).get(req.eventId);
   if (req.user.role === 'usher') return res.json({ summary });
-  const last = db.prepare(`SELECT g.name, g.serial, s.scanned_at, s.usher FROM scans s JOIN guests g ON g.id=s.guest_id WHERE g.event_id=? AND s.result="admitted" ORDER BY s.scanned_at DESC LIMIT 10`).all(req.eventId);
-  const byUsher = db.prepare(`SELECT usher, count(*) count FROM scans s JOIN guests g ON g.id=s.guest_id WHERE g.event_id=? AND s.result="admitted" GROUP BY usher ORDER BY count DESC`).all(req.eventId);
+  const last = db.prepare(`SELECT g.name, g.serial, s.scanned_at, s.usher FROM scans s JOIN guests g ON g.id=s.guest_id WHERE g.event_id=? AND s.result='admitted' ORDER BY s.scanned_at DESC LIMIT 10`).all(req.eventId);
+  const byUsher = db.prepare(`SELECT usher, count(*) count FROM scans s JOIN guests g ON g.id=s.guest_id WHERE g.event_id=? AND s.result='admitted' GROUP BY usher ORDER BY count DESC`).all(req.eventId);
   res.json({ summary, last, byUsher });
 });
 

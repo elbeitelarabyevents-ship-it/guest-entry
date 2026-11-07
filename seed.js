@@ -78,7 +78,7 @@ db.exec(`
   );
 `);
 
-if (!db.prepare('SELECT 1 FROM users WHERE role="admin"').get()) {
+if (!db.prepare("SELECT 1 FROM users WHERE role='admin'").get()) {
   const password = process.env.SEED_ADMIN_PASSWORD || randomBytes(18).toString('base64url');
   db.prepare('INSERT INTO users(id, username, password_hash, role) VALUES(?,?,?,?)')
     .run(randomUUID(), 'admin', bcrypt.hashSync(password, 12), 'admin');
