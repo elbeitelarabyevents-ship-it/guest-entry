@@ -123,6 +123,14 @@ db.exec(`
   );
 `);
 
+// Ensure default admin account exists
+if (!db.prepare("SELECT 1 FROM users WHERE role='admin'").get()) {
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'admin123';
+  db.prepare('INSERT INTO users(id, username, password_hash, role) VALUES(?,?,?,?)')
+    .run(randomUUID(), 'admin', bcrypt.hashSync(adminPassword, 12), 'admin');
+  console.log(`Initialized admin account: admin / ${adminPassword}`);
+}
+
 if (!db.prepare('PRAGMA table_info(events)').all().some(c => c.name === 'slug')) {
   db.exec('ALTER TABLE events ADD COLUMN slug TEXT');
 }
