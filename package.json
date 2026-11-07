@@ -1,0 +1,14 @@
+{
+  "name": "guest-entry",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Multi-event guest entry and QR invitation PWA",
+  "engines": { "node": ">=18" },
+  "scripts": { "start": "node server.js", "dev": "node --watch server.js", "seed": "node seed.js" },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.68", "bcryptjs": "^2.4.3", "better-sqlite3": "^11.5.0",
+    "cookie-parser": "^1.4.7", "csv-parse": "^5.6.0", "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0", "helmet": "^8.0.0", "jsqr": "^1.4.0", "multer": "^1.4.5-lts.1",
+    "pdfkit": "^0.16.0", "qrcode": "^1.5.4", "uuid": "^11.0.3", "xlsx": "^0.18.5"
+  }
+}

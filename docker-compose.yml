@@ -1,0 +1,11 @@
+services:
+  guest-entry:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file: .env
+    volumes:
+      - guest_entry_data:/app/data
+volumes:
+  guest_entry_data:
